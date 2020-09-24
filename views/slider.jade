@@ -48,3 +48,10 @@ html
       slider.oninput = function() {
       output.innerHTML = this.value;
       }
+
+
+    script(src="/socket.io/socket.io.js")
+    script.
+      //consider delaying the emit
+      var socket = io('//'+document.location.hostname+':'+document.location.port);
+      socket.emit('add', Number(slider.value));

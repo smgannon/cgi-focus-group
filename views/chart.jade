@@ -42,22 +42,27 @@ html
       setInterval(function(){ updateChart() }, updateInterval);
       
       
-      
-      //- these lines handles the socketio connection
-    const socket = io();
-    var someValue = 7;
-    //- emits values back to the sever
-    socket.emit('add', someValue);
-    //- the socket listens for data from the sever and updates the charts array of values
-    socket.on('update', (arr) => {
-    numbers = arr;
-    console.log(numbers);
-    });
-      
-      
-      
-      
       }
     #chartContainer(style='width: 100%; height: 370px;')
+
+
+    script(src="/socket.io/socket.io.js")
+    script.
+        //- these lines handles the socketio connection
+        var socket = io();
+        var someValue = 7;
+        //- emits values back to the sever
+        socket.emit('add', someValue);
+        //- the socket listens for data from the sever and updates the charts array of values
+        socket.on('update', (arr) => {
+        dps = arr;
+        //- chart.data.dataPoints= arr;
+        //- chart.update();
+        console.log(dps);
+        });
+
     script(src='https://canvasjs.com/assets/script/canvasjs.min.js')
     //- add event handler to pass data down here for data points using socket io
+
+   
+    

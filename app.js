@@ -94,13 +94,16 @@ app.use(function(err, req, res, next) {
 
 module.exports = {app: app, server: server};
 
-const chartArray = [4, 0, 20, 5, 50, 30, 0];
 
+const chartArray = [1];
+//Listens for a socket named 'connection'
 io.on('connection', (socket) => {
+    //listens for data to be passed through a communication on the socket named 'add'
     socket.on('add', (data) => {
+        //pushes that data passed onto the chart array
         chartArray.push(data);
     }); 
-
+    //sends the chart array to the socket channel named 'update' every 25 seconds
     setInterval(function() {
         socket.emit('update', chartArray);
     },1000/25);
