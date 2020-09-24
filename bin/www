@@ -5,8 +5,7 @@
  */
 
 var app = require('../app').app;
-var debug = require('debug')('www:server');
-var http = require('http');
+var debug = require('debug')('cgi-focus-group:server');
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +18,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = require('../app').server;
+var server = require("../app").server;
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -88,3 +87,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+

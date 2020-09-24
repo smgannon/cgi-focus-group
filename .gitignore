@@ -5,3 +5,4 @@ node_modules
 
 # Don't ignore .gitignore
 !.gitignore
+package-lock.json
