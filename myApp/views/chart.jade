@@ -1,0 +1,63 @@
+html
+  head
+  body
+    //- https://html2jade.org/ converts html to jade syntax
+    script.
+      window.onload = function () {
+      var dps = []; //data point array
+      var chart = new CanvasJS.Chart("chartContainer", {
+      exportEnabled: true,
+      title :{
+      text: "Dynamic Spline Chart"
+      },
+      data: [{
+      type: "spline",
+      markerSize: 0,
+      dataPoints: dps
+      }]
+      });
+      var xVal = 0;
+      var yVal = 100;
+      var updateInterval = 1000;
+      var dataLength = 50; // number of dataPoints visible at any point
+      var updateChart = function (count) {
+      count = count || 1;
+      // count is number of times loop runs to generate random dataPoints.
+      for (var j = 0; j < count; j++) {
+      yVal = yVal + Math.round(5 + Math.random() *(-5-5));
+      dps.push({
+      x: xVal,
+      y: yVal
+      });
+      xVal++;
+      }
+      if (dps.length > dataLength) {
+      dps.shift();
+      }
+      chart.render();
+      };
+
+      //calls function to update the chart on window.onload
+      updateChart(dataLength);
+      setInterval(function(){ updateChart() }, updateInterval);
+      
+      
+      
+      //- these lines handles the socketio connection
+    const socket = io();
+    var someValue = 7;
+    //- emits values back to the sever
+    socket.emit('add', someValue);
+    //- the socket listens for data from the sever and updates the charts array of values
+    socket.on('update', (arr) => {
+    numbers = arr;
+    console.log(numbers);
+    });
+      
+      
+      
+      
+      }
+    #chartContainer(style='width: 100%; height: 370px;')
+    script(src='https://canvasjs.com/assets/script/canvasjs.min.js')
+    //- add event handler to pass data down here for data points using socket io
