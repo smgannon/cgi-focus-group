@@ -3,6 +3,7 @@
   <title>Yacht Simulator 2020</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment.min.js"></script>
 </html>
 <body>
   <canvas id="myChart"></canvas>
@@ -13,7 +14,29 @@
   </div>
 </body>
 <script>
-  var userName = window.prompt("Please enter your username");
+  const numDataPoints = 5 * 60; //5 min
+  var timeFormat = 'HH:mm:ss';
+
+  var metadata = {};
+  metadata.label = window.prompt("Please enter your username");
+  metadata.borderColor =
+    "rgb(" +
+    Math.floor(Math.random() * 256) +
+    "," +
+    Math.floor(Math.random() * 256) +
+    "," +
+    Math.floor(Math.random() * 256) +
+    ")";
+  metadata.fill = false;
+  metadata.data = [];
+  var labels = [];
+
+  //dont @ me with the old school for loop
+  for (var i = numDataPoints; i > 0; i-- ){
+    metadata.data.push(50); //add 50 middle of the road elements
+    labels.push(moment().subtract(i, "s").format(timeFormat));
+  }
+
   var socket = io(document.location.hostname + ":" + document.location.port);
   var ctx = document.getElementById("myChart").getContext("2d");
   var chart = new Chart(ctx, {
@@ -22,7 +45,7 @@
 
     // The data for our dataset
     data: {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      labels: labels,
       datasets: [
         {
           label: "My First dataset",
@@ -40,16 +63,32 @@
     },
 
     // Configuration options go here
-    options: {},
+    options: {
+      animation: {duration: 0}
+
+    },
   });
 
-  const slider = document.getElementById("slider");
-  slider.addEventListener("mouseup", (e) => {
-    socket.emit("add", { username: userName, value: e.target.value });
-  });
+  function updatePersonalDataArray() {
+    const slider = document.getElementById("slider");
+    metadata.data.shift();
+    metadata.data.push(slider.value);
+  }
+
+  function updateChart(data) {
+    chart.data.datasets = data;
+    chart.data.labels.shift();
+    chart.data.labels.push(moment().format(timeFormat));
+    chart.update();
+  }
+
   socket.on("update", function (msg) {
-    console.log(msg)
+    updatePersonalDataArray();
+    updateChart(msg);
+    socket.emit("add", metadata);
   });
+
+
 </script>
 <style>
   input[type="range"] {
