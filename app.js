@@ -49,17 +49,23 @@ module.exports = {app: app, server: server};
 
 let currentState = new Map() //Map object with key value pair
 
+//execute the following actions for each socket while there is a connection
 io.on('connection', (socket) => {
-  // Listens for msg object passed by the client on the channel 'chat message'
+  // Listens for msg object passed by a socket on the channel 'add'
   socket.on('add', (msg) => {
     //adds a new user to the Map object
     currentState.set(socket.id, msg);
     console.log(msg);
   });
 
-  //periodically emits an array of the objects stored in the Map
+  //periodically emits an array of the objects stored in the currentState Map object
   setInterval(function() {
     socket.emit('update', Array.from(currentState.values()));
   },1000);
+
+  //listens for a socket to disconnect. If a disconnect occurs the user is deleted from the currentState Map object
+  socket.on('disconnect', () => {
+    currentState.delete(socket.id);
+  });
 
 });
