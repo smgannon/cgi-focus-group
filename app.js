@@ -54,12 +54,12 @@ io.on('connection', (socket) => {
   socket.on('add', (msg) => {
     //adds a new user to the Map object
     currentState.set(socket.id, msg);
-    console.log("User with socketid " +socket.id+ " username: "+ msg.userName +" sent value of : " + msg.value +" to the server.");
+    console.log(msg);
   });
 
   //periodically emits an array of the objects stored in the Map
   setInterval(function() {
-    socket.emit('update', [...currentState]);
-  },10000);
+    socket.emit('update', Array.from(currentState.values()));
+  },1000);
 
 });
