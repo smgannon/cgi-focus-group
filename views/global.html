@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title>Yacht Simulator 2020</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</html>
+<body>
+  <canvas id="myChart"></canvas>
+  <div class="container">
+    <div id="slider-container">
+      <input type="range" id="slider" name="vol" min="0" max="100" />
+    </div>
+  </div>
+</body>
+<script>
+  var userName = window.prompt("Please enter your username");
+  var socket = io(document.location.hostname + ":" + document.location.port);
+  var ctx = document.getElementById("myChart").getContext("2d");
+  var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: "line",
+
+    // The data for our dataset
+    data: {
+      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      datasets: [
+        {
+          label: "My First dataset",
+          borderColor: "rgb(255, 99, 132)",
+          data: [0, 10, 5, 2, 20, 30, 45],
+          fill: false,
+        },
+        {
+          label: "My Second dataset",
+          borderColor: "rgb(20, 99, 132)",
+          data: [0, 5, 10, 3, 9, 8],
+          fill: false,
+        },
+      ],
+    },
+
+    // Configuration options go here
+    options: {},
+  });
+
+  const slider = document.getElementById("slider");
+  slider.addEventListener("mouseup", (e) => {
+    socket.emit("add", { username: userName, value: e.target.value });
+  });
+  socket.on("update", function (msg) {
+    console.log(msg)
+  });
+</script>
+<style>
+  input[type="range"] {
+    width: 100%;
+  }
+</style>
