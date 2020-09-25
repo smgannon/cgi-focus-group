@@ -33,7 +33,7 @@
 
   //dont @ me with the old school for loop
   for (var i = numDataPoints; i > 0; i-- ){
-    metadata.data.push(50); //add 50 middle of the road elements
+    metadata.data.push(null); //add 50 middle of the road elements
     labels.push(moment().subtract(i, "s").format(timeFormat));
   }
 
