@@ -32,13 +32,16 @@
 //https://socket.io/docs/
 
 
+
+
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-//TODO: add new Routes here
+//TODO: import new Routes here
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var chartRouter = require('./routes/chart');
@@ -95,16 +98,48 @@ app.use(function(err, req, res, next) {
 module.exports = {app: app, server: server};
 
 
-const chartArray = [1];
-//Listens for a socket named 'connection'
+// const chartArray = [1];
+// //Listens for a socket named 'connection'
+// io.on('connection', (socket) => {
+//     //listens for data to be passed through a communication on the socket named 'add'
+//     socket.on('add', (data) => {
+//         //pushes that data passed onto the chart array
+//         chartArray.push(data);
+//     }); 
+//     //sends the chart array to the socket channel named 'update' every 25 seconds
+//     setInterval(function() {
+//         socket.emit('update', chartArray);
+//     },1000/25);
+// });
+
+
+
+// Store the imported class here
+// var user = require('./User');
+// var userArray = [];
+// userArray.push(new User(1, 5));
+// console.log("Test");
+
+
+
+
+let currentState = new Map() //Map object with key value pair
+
 io.on('connection', (socket) => {
-    //listens for data to be passed through a communication on the socket named 'add'
-    socket.on('add', (data) => {
-        //pushes that data passed onto the chart array
-        chartArray.push(data);
-    }); 
-    //sends the chart array to the socket channel named 'update' every 25 seconds
-    setInterval(function() {
-        socket.emit('update', chartArray);
-    },1000/25);
+  // Listens for msg object passed by the client on the channel 'chat message'
+  socket.on('add', (msg) => {
+    //adds a new user to the Map object
+    currentState.set(socket.id, msg);
+    console.log("User with socketid " +socket.id+ " username: "+ msg.userName +" sent value of : " + msg.value +" to the server.");
+  });
+
+  //periodically emits an array of the objects stored in the Map
+  setInterval(function() {
+    socket.emit('update', currentState);
+  },10000);
+
 });
+
+
+
+//currentState.get(socket.id)
